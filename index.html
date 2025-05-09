@@ -1,0 +1,2439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Cooking Assistant</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      background: #f9f9f9;
+    }
+
+    header {
+      background: #ffa07a;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .logo {
+      height: 50px;
+      border-radius: 50%;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+
+    .meal-planner {
+  position: relative;
+  margin: 2rem auto;
+  padding: 1rem 3rem; /* space for buttons */
+  width: 100%;
+  max-width: 1200px;
+  background: #fff0db;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+    
+
+    .meal-planner input {
+      width: 60%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .meal-planner button {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: #ffa07a;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .recipe-row {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding-bottom: 1rem;
+}
+
+.recipe-card {
+  min-width: 300px;
+  background: #fffacd;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  padding: 1rem;
+  flex-shrink: 0;
+}
+
+.slide-container {
+  position: relative;
+  overflow: hidden;
+  height: 180px;
+}
+
+.slide-container img {
+  width: 100%;
+  display: none;
+}
+
+.slide-container img.active {
+  display: block;
+}
+.input-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+.input-group legend {
+  font-weight: bold;
+  color: #ff7f50;
+  margin-bottom: 0.5rem;
+}
+
+.input-group label {
+        flex: 1 1 45%;
+        background: #fff;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+.scroll-container {
+  background: #fffacd;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  padding: 1rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.scroll-content {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0;
+}
+
+.recipe-mini-card {
+  min-width: 180px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 0.5rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
+
+.scroll-btn-outer {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ffffff;
+  border: 2px solid #ffb96a;
+  border-radius: 50%;
+  padding: 10px 15px;
+  font-size: 20px;
+  z-index: 10;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.scroll-btn-outer:hover {
+  background-color: #ffe2c1;
+}
+
+.scroll-btn-outer.left {
+  left: 0;
+}
+
+.scroll-btn-outer.right {
+  right: 0;
+}
+
+
+
+.prev, .next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #eee;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+.prev { left: 5px; }
+.next { right: 5px; }
+
+.recipe-info {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+    .recipe-card {
+  background: #fffacd;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+.multi-slide-card {
+  width: 600px;
+  background: #fffacd;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  overflow: hidden;
+  position: relative;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.slide {
+  display: none;
+  padding: 1rem;
+}
+
+.slide.active {
+  display: block;
+}
+
+.slide img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.card-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ddd;
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  z-index: 2;
+  opacity: 0.8;
+}
+
+.card-nav-btn.left { left: 10px; }
+.card-nav-btn.right { right: 10px; }
+
+.recipe-slide-row {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding-bottom: 1rem;
+}
+
+    .slide-container {
+      position: relative;
+      height: 180px;
+      overflow: hidden;
+    }
+
+    .slide-container img {
+      width: 100%;
+      height: 180px;
+      display: none;
+      object-fit: cover;
+    }
+
+    .slide-container .slide:first-child {
+      display: block;
+    }
+
+    .prev, .next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(255,255,255,0.7);
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+      font-size: 20px;
+      z-index: 2;
+    }
+
+    .prev {
+      left: 5px;
+    }
+
+    .next {
+      right: 5px;
+    }
+    
+
+    .recipe-info {
+      padding: 10px;
+    }
+    .recipe-scroll-row {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+.outer-veg-card {
+  position: relative;
+  margin: 2rem auto;
+  padding: 1rem 3rem; /* space for buttons */
+  width: 100%;
+  max-width: 1200px;
+  background: #fff0db;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+
+
+.inner-recipe-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  scroll-behavior: smooth;
+  padding: 1rem 0;
+}
+
+.mini-recipe-card {
+  width: 500px;
+  height: 300px; /* Set a fixed height */
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-recipe-card .slide {
+  display: none;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.mini-recipe-card .slide.active {
+  display: block;
+}
+
+.mini-recipe-card .slide img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.mini-recipe-card .slide ul, 
+.mini-recipe-card .slide ol {
+  padding-left: 1.2rem;
+  margin-top: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.mini-recipe-card .slide h4 {
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.mini-recipe-card .slide p {
+  font-size: 0.9rem;
+}
+
+
+.card-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ccc;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+fieldset {
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+      }
+      legend {
+        font-weight: bold;
+        padding: 0 10px;
+      }
+
+.multi-slide-card {
+  width: 600px;
+  background: #fffacd;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+#suggestedMeal {
+  display: flex;
+  overflow-x: scroll;  /* Enable horizontal scrolling */
+  padding: 10px;
+}
+
+#suggestedMeal {
+  display: flex;
+  overflow-x: scroll;  /* Enable horizontal scrolling */
+  padding: 10px;
+}
+
+.mini-recipe-card {
+  margin-right: 20px;  /* Space between the cards */
+  width: 300px;        /* Card width */
+  flex-shrink: 0;      /* Prevent cards from shrinking */
+}
+
+
+.slide {
+  display: none;
+  padding: 1rem;
+}
+
+.slide.active {
+  display: block;
+}
+
+.slide img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.card-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ddd;
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  z-index: 2;
+  opacity: 0.8;
+}
+.step-slider img {
+    transition: all 0.5s ease;
+  }
+  .step-slider button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #ffa726;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .step-slider button:hover {
+    background-color: #fb8c00;
+  }
+
+
+
+.card-nav-btn.left { left: 10px; }
+.card-nav-btn.right { right: 10px; }
+
+
+    footer {
+      background: #ffa07a;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+    <header>
+        <img src=" logo.png" alt="Logo" class="logo" >
+        <h1>AI Cooking Assistant</h1>
+    </header>
+     
+
+    <main class="main-content">
+      <section id="home" class="section active" style="padding: 20px; font-family: Arial, sans-serif;">
+        <div class="meal-planner" style="max-width: 1000px; margin: auto; background: #f9f9f9; padding: 30px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+          <h2 style="text-align: center;">🧠 AI Meal Planner 🧠</h2>
+          <p style="text-align: center; margin-bottom: 25px;">Optional: Select dietary needs to personalize your recipes</p>
+      
+          <!-- Header Row -->
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); font-weight: bold; margin-bottom: 10px; text-align: center;">
+            <div>🩺 Medical</div>
+            <div>🌱 Lifestyle</div>
+            <div>⚠️ Allergy</div>
+            <div>✨ Other</div>
+          </div>
+      
+          <!-- Options Rows -->
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+      
+            <!-- Medical Row 1 -->
+            <label style="white-space: nowrap;"><input type="checkbox" value="diabetes" style="margin-right: 4px;">Diabetes</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="vegetarian" style="margin-right: 4px;">Vegetarian</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="peanut-free" style="margin-right: 4px;">Peanut-Free</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="pregnancy" style="margin-right: 4px;">Pregnancy</label>
+      
+            <!-- Medical Row 2 -->
+            <label style="white-space: nowrap;"><input type="checkbox" value="low-sodium" style="margin-right: 4px;">Low-Sodium</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="vegan" style="margin-right: 4px;">Vegan</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="tree-nut-free" style="margin-right: 4px;">Tree Nut-Free</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="athletic-performance" style="margin-right: 4px;">Athletic Performance</label>
+      
+            <!-- Medical Row 3 -->
+            <label style="white-space: nowrap;"><input type="checkbox" value="gluten-free" style="margin-right: 4px;">Gluten-Free</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="flexitarian" style="margin-right: 4px;">Flexitarian</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="shellfish-free" style="margin-right: 4px;">Shellfish-Free</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="weight-loss" style="margin-right: 4px;">Weight Loss</label>
+      
+            <!-- Medical Row 4 -->
+            <label style="white-space: nowrap;"><input type="checkbox" value="low-fat" style="margin-right: 4px;">Low-Fat</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="paleo" style="margin-right: 4px;">Paleo</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="dairy-free" style="margin-right: 4px;">Dairy-Free</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="geriatric" style="margin-right: 4px;">Geriatric</label>
+      
+            <!-- Medical Row 5 -->
+            <label style="white-space: nowrap;"><input type="checkbox" value="renal-diet" style="margin-right: 4px;">Renal Diet</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="keto" style="margin-right: 4px;">Keto</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="soy-free" style="margin-right: 4px;">Soy-Free</label>
+            <label style="white-space: nowrap;"><input type="checkbox" value="cultural-traditional" style="margin-right: 4px;">Cultural/Traditional</label>
+          </div>
+      
+          <!-- Custom Needs Input -->
+          <input type="text" id="customNeeds" placeholder="Any specific needs (optional)" style="width: 100%; padding: 10px; margin-top: 20px; border-radius: 8px; border: 1px solid #ccc;" />
+      
+          <!-- Suggest Button -->
+          <button onclick="collectAndSuggest()" style="width: 100%; padding: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px;">Suggest Recipe</button>
+      
+          <!-- Output -->
+          <!-- Output -->
+
+      </section>
+<div class="outer-veg-card">
+        <h2>🥦🍅🥕 Suggested Recipes 🥦🍅🥕</h2>                  
+          <!-- Scrollable Inner Cards -->
+            <div class="inner-recipe-scroll" id="vegRecipeScroll">                
+              <!-- Mini Recipe Card 1 -->
+<!-- Combination 1: Diabetes, Vegetarian, Peanut-Free, Pregnancy -->
+<!-- Recipe 1: Quinoa and Black Bean Bowl with Roasted Vegetables -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍲 Quinoa and Black Bean Bowl with Roasted Vegetables</h3>
+      <img src=" s1quinoa.png" alt="Quinoa and Black Bean Bowl">
+      <p><strong>⏱️ Time:</strong> 25 mins | 🍽️ 3 Servings | 180 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🌾 Quinoa</li>
+          <li>🫘 Black Beans</li>
+          <li>🥦 Roasted Vegetables</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Cook quinoa</li>
+          <li>🍠 Roast vegetables</li>
+          <li>🍽️ Combine and serve</li>
+      </ol>
+  </div>
+  <div class="slide">
+    <h4>🍴 Preparation</h4>
+    <ol>
+        <li>🍳 Cook quinoa</li>
+        <li>🍠 Roast vegetables</li>
+        <li>🍽️ Combine and serve</li>
+    </ol>
+</div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+<!-- Recipe 2: Grilled Portobello Mushroom Burgers with Sweet Potato Fries -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍔 Grilled Portobello Mushroom Burgers with Sweet Potato Fries</h3>
+      <img src=" s2grilled.png" alt="Portobello Mushroom Burger">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 250 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🍄 Portobello Mushrooms</li>
+          <li>🍠 Sweet Potato Fries</li>
+          <li>🥬 Lettuce</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Grill mushrooms</li>
+          <li>🍠 Roast sweet potatoes</li>
+          <li>🍔 Assemble the burger</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+<!-- Recipe 3: Spinach and Feta Stuffed Bell Peppers -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🌶️ Spinach and Feta Stuffed Bell Peppers</h3>
+      <img src=" s3spinach.png" alt="Stuffed Bell Peppers">
+      <p><strong>⏱️ Time:</strong> 35 mins | 🍽️ 2 Servings | 200 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🍃 Spinach</li>
+          <li>🧀 Feta Cheese</li>
+          <li>🌶️ Bell Peppers</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Stuff bell peppers</li>
+          <li>🧀 Bake peppers</li>
+          <li>🍽️ Serve and enjoy</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+<!-- Recipe 4: Lentil and Vegetable Curry with Brown Rice -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍛 Lentil and Vegetable Curry with Brown Rice</h3>
+      <img src=" s4lentil.png" alt="Lentil Curry">
+      <p><strong>⏱️ Time:</strong> 40 mins | 🍽️ 4 Servings | 300 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🍲 Lentils</li>
+          <li>🥦 Mixed Vegetables</li>
+          <li>🍚 Brown Rice</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Cook lentils and vegetables</li>
+          <li>🍚 Cook brown rice</li>
+          <li>🍽️ Combine and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+<!-- Recipe 5: Roasted Vegetable Soup with Whole Grain Bread -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍲 Roasted Vegetable Soup with Whole Grain Bread</h3>
+      <img src=" s5roasted.png" alt="Roasted Vegetable Soup">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 180 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🥕 Mixed Vegetables</li>
+          <li>🍞 Whole Grain Bread</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Roast vegetables</li>
+          <li>🍞 Toast bread</li>
+          <li>🍽️ Serve with soup</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+
+<!-- Combination 2: Low-Sodium, Vegetarian, Peanut-Free, Pregnancy -->
+<!-- Recipe 1: Low-Sodium Lentil Soup with Whole Grain Bread -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍲 Low-Sodium Lentil Soup with Whole Grain Bread</h3>
+      <img src=" s6low.png" alt="Low-Sodium Lentil Soup">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 180 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🍲 Lentils</li>
+          <li>🍞 Whole Grain Bread</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Cook lentils with vegetables</li>
+          <li>🍞 Toast whole grain bread</li>
+          <li>🍽️ Serve with soup and bread</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 2: Grilled Vegetable Skewers with Quinoa -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍢 Grilled Vegetable Skewers with Quinoa</h3>
+      <img src=" s7skewers.png" alt="Grilled Vegetable Skewers">
+      <p><strong>⏱️ Time:</strong> 25 mins | 🍽️ 2 Servings | 350 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🥕 Grilled Vegetables</li>
+          <li>🌾 Quinoa</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Grill vegetables on skewers</li>
+          <li>🌾 Cook quinoa</li>
+          <li>🍽️ Serve vegetables with quinoa</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 3: Roasted Vegetable Bowl with Chickpeas -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🥗 Roasted Vegetable Bowl with Chickpeas</h3>
+      <img src="s8.png" alt="Roasted Vegetable Bowl">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 280 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🧆 Chickpeas</li>
+          <li>🥕 Roasted Vegetables</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Roast vegetables</li>
+          <li>🧆 Warm chickpeas</li>
+          <li>🥗 Combine roasted vegetables and chickpeas</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 4: Spinach and Feta Stuffed Zucchini Boats -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🥒 Spinach and Feta Stuffed Zucchini Boats</h3>
+      <img src=" s9spinach.png" alt="Spinach and Feta Stuffed Zucchini">
+      <p><strong>⏱️ Time:</strong> 20 mins | 🍽️ 2 Servings | 220 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🍃 Spinach</li>
+          <li>🧀 Feta Cheese</li>
+          <li>🥒 Zucchini</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🥒 Hollow zucchini boats</li>
+          <li>🍃 Stuff with spinach and feta</li>
+          <li>🍽️ Roast and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 5: Vegetable Stir-Fry with Tofu and Brown Rice -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍜 Vegetable Stir-Fry with Tofu and Brown Rice</h3>
+      <img src=" s10stir.png" alt="Vegetable Stir-Fry">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 320 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🍣 Tofu</li>
+          <li>🍚 Brown Rice</li>
+          <li>🥕 Stir-Fry Vegetables</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Stir-fry tofu and vegetables</li>
+          <li>🍚 Cook brown rice</li>
+          <li>🍽️ Serve stir-fry over rice</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+
+<!-- Combination 3: Gluten-Free, Vegan, Soy-Free, Athletic Performance -->
+<!-- Recipe 1: Grilled Vegetable Skewers with Quinoa and Almond Butter -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍢 Grilled Vegetable Skewers with Quinoa and Almond Butter</h3>
+      <img src=" s11Grilled Vegetable Skewers with Quinoa and Almond Butter.png" alt="Grilled Vegetable Skewers">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 350 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🥕 Grilled Vegetables</li>
+          <li>🌾 Quinoa</li>
+          <li>🥄 Almond Butter</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Grill vegetables on skewers</li>
+          <li>🌾 Cook quinoa</li>
+          <li>🥄 Serve grilled vegetables with quinoa and almond butter</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 2: Vegan Black Bean Tacos with Avocado Salsa -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🌮 Vegan Black Bean Tacos with Avocado Salsa</h3>
+      <img src=" s12vegan.png" alt="Black Bean Tacos">
+      <p><strong>⏱️ Time:</strong> 20 mins | 🍽️ 2 Servings | 280 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🧆 Black Beans</li>
+          <li>🥑 Avocado</li>
+          <li>🌮 Taco Shells</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🧆 Prepare black beans</li>
+          <li>🥑 Make avocado salsa</li>
+          <li>🌮 Assemble tacos and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 3: Roasted Sweet Potato and Black Bean Bowl -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍠 Roasted Sweet Potato and Black Bean Bowl</h3>
+      <img src=" s5roasted.png" alt="Sweet Potato and Black Bean Bowl">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 3 Servings | 250 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🍠 Sweet Potato</li>
+          <li>🧆 Black Beans</li>
+          <li>🌶️ Spices</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Roast sweet potatoes</li>
+          <li>🧆 Cook black beans</li>
+          <li>🍠 Combine and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 4: Grilled Portobello Mushroom Burgers with Sweet Potato Fries -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍔 Grilled Portobello Mushroom Burgers with Sweet Potato Fries</h3>
+      <img src=" s5roasted.png" alt="Portobello Mushroom Burgers">
+      <p><strong>⏱️ Time:</strong> 35 mins | 🍽️ 2 Servings | 320 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🍄 Portobello Mushrooms</li>
+          <li>🍠 Sweet Potatoes</li>
+          <li>🍞 Burger Buns</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍄 Grill Portobello mushrooms</li>
+          <li>🍠 Prepare sweet potato fries</li>
+          <li>🍔 Assemble burgers with fries</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 5: Chia Seed Pudding with Fresh Fruit -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍧 Chia Seed Pudding with Fresh Fruit</h3>
+      <img src=" s5roasted.png" alt="Chia Seed Pudding">
+      <p><strong>⏱️ Time:</strong> 15 mins | 🍽️ 2 Servings | 200 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🌱 Chia Seeds</li>
+          <li>🥥 Coconut Milk</li>
+          <li>🍓 Fresh Fruit</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🌱 Mix chia seeds with coconut milk</li>
+          <li>🍓 Top with fresh fruit</li>
+          <li>🍧 Serve and enjoy</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+
+<!-- Combination 4: Low-Fat, Vegan, Peanut-Free, Weight Loss -->
+<!-- Recipe 1: Vegan Lentil Soup with Whole Grain Bread -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍲 Vegan Lentil Soup with Whole Grain Bread</h3>
+      <img src=" s5roasted.png" alt="Vegan Lentil Soup">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 180 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested Ingredients</h4>
+      <ul>
+          <li>🌱 Lentils</li>
+          <li>🍞 Whole Grain Bread</li>
+          <li>🌶️ Spices</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation Steps</h4>
+      <ol>
+          <li>🍳 Cook lentils</li>
+          <li>🌱 Add spices and simmer</li>
+          <li>🍞 Serve with whole grain bread</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 2: Grilled Vegetable Skewers with Quinoa -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍢 Grilled Vegetable Skewers with Quinoa</h3>
+      <img src=" s10stir.png" alt="Grilled Vegetable Skewers">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 250 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🥕 Grilled Vegetables</li>
+          <li>🌾 Quinoa</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Grill vegetables</li>
+          <li>🌾 Cook quinoa</li>
+          <li>🍽️ Serve grilled vegetables with quinoa</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 3: Roasted Vegetable Bowl with Chickpeas -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍲 Roasted Vegetable Bowl with Chickpeas</h3>
+      <img src=" s10stir.png" alt="Roasted Vegetable Bowl">
+      <p><strong>⏱️ Time:</strong> 35 mins | 🍽️ 3 Servings | 270 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🧆 Chickpeas</li>
+          <li>🥕 Roasted Vegetables</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Roast vegetables</li>
+          <li>🧆 Cook chickpeas</li>
+          <li>🍲 Assemble and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 4: Spinach and Mushroom Stuffed Bell Peppers -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🌶️ Spinach and Mushroom Stuffed Bell Peppers</h3>
+      <img src=" s10stir.png" alt="Stuffed Bell Peppers">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 200 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🌱 Spinach</li>
+          <li>🍄 Mushrooms</li>
+          <li>🌶️ Bell Peppers</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Sauté spinach and mushrooms</li>
+          <li>🌶️ Stuff bell peppers</li>
+          <li>🍽️ Bake and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 5: Vegan Smoothie Bowl with Banana and Spinach -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🥑 Vegan Smoothie Bowl with Banana and Spinach</h3>
+      <img src=" s10stir.png" alt="Vegan Smoothie Bowl">
+      <p><strong>⏱️ Time:</strong> 15 mins | 🍽️ 1 Serving | 180 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🍌 Banana</li>
+          <li>🌱 Spinach</li>
+          <li>🥥 Almond Milk</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍌 Blend ingredients</li>
+          <li>🥥 Pour into a bowl</li>
+          <li>🍽️ Top with fruits and nuts</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+
+
+<!-- Combination 5: Renal Diet, Vegetarian, Soy-Free, Older Adults -->
+<!-- Recipe 1: Low-Potassium Vegetable Soup with Whole Grain Bread -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍲 Low-Potassium Vegetable Soup with Whole Grain Bread</h3>
+      <img src=" s10stir.png" alt="Low-Potassium Vegetable Soup">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 180 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li><img src="vegetables.png" width="30"> 🥕 Mixed Vegetables</li>
+          <li><img src="wholegrain-bread.png" width="30"> 🍞 Whole Grain Bread</li>
+          <li><img src="herbs.png" width="30"> 🌿 Herbs</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li><img src="step1-soup.jpg" width="100%"> 🍳 Cook vegetables</li>
+          <li><img src="step2-soup.jpg" width="100%"> 🌿 Add herbs and simmer</li>
+          <li><img src="step3-soup.jpg" width="100%"> 🍞 Serve with whole grain bread</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 2: Grilled Portobello Mushroom Burgers with Sweet Potato Fries -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍔 Grilled Portobello Mushroom Burgers with Sweet Potato Fries</h3>
+      <img src=" s10stir.png" alt="Portobello Mushroom Burger">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 250 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li><img src="portobello.png" width="30"> 🍄 Portobello Mushrooms</li>
+          <li><img src="sweet-potato.png" width="30"> 🍠 Sweet Potatoes</li>
+          <li><img src="lettuce.png" width="30"> 🥬 Lettuce</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li><img src="step1-portobello.jpg" width="100%"> 🍳 Grill mushrooms</li>
+          <li><img src="step2-portobello.jpg" width="100%"> 🍠 Roast sweet potatoes</li>
+          <li><img src="step3-portobello.jpg" width="100%"> 🍔 Assemble burger and serve with fries</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 3: Roasted Vegetable Bowl with Quinoa and Almond Butter -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍲 Roasted Vegetable Bowl with Quinoa and Almond Butter</h3>
+      <img src=" s10stir.png" alt="Roasted Vegetable Bowl">
+      <p><strong>⏱️ Time:</strong> 40 mins | 🍽️ 3 Servings | 300 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li><img src="quinoa.png" width="30"> 🌾 Quinoa</li>
+          <li><img src="vegetables.png" width="30"> 🥕 Roasted Vegetables</li>
+          <li><img src="almond-butter.png" width="30"> 🥜 Almond Butter</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li><img src="step1-roast.jpg" width="100%"> 🍳 Roast vegetables</li>
+          <li><img src="step2-roast.jpg" width="100%"> 🌾 Cook quinoa</li>
+          <li><img src="step3-roast.jpg" width="100%"> 🥜 Add almond butter and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 4: Spinach and Feta Stuffed Zucchini Boats -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🌱 Spinach and Feta Stuffed Zucchini Boats</h3>
+      <img src=" s10stir.png" alt="Spinach and Feta Stuffed Zucchini Boats">
+      <p><strong>⏱️ Time:</strong> 25 mins | 🍽️ 2 Servings | 150 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li><img src="spinach.png" width="30"> 🌱 Spinach</li>
+          <li><img src="feta.png" width="30"> 🧀 Feta Cheese</li>
+          <li><img src="zucchini.png" width="30"> 🥒 Zucchini</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li><img src="step1-zucchini.jpg" width="100%"> 🍳 Sauté spinach</li>
+          <li><img src="step2-zucchini.jpg" width="100%"> 🥒 Stuff zucchini with spinach and feta</li>
+          <li><img src="step3-zucchini.jpg" width="100%"> 🍽️ Bake and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 5: Low-Phosphorus Vegetable Stir-Fry with Tofu -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🥢 Low-Phosphorus Vegetable Stir-Fry with Tofu</h3>
+      <img src=" s10stir.png" alt="Low-Phosphorus Vegetable Stir-Fry">
+      <p><strong>⏱️ Time:</strong> 25 mins | 🍽️ 2 Servings | 220 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li><img src="tofu.png" width="30"> 🍱 Tofu</li>
+          <li><img src="vegetables.png" width="30"> 🥕 Mixed Vegetables</li>
+          <li><img src="soy-sauce.png" width="30"> 🍶 Soy Sauce</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li><img src="step1-stirfry.jpg" width="100%"> 🍳 Stir-fry tofu</li>
+          <li><img src="step2-stirfry.jpg" width="100%"> 🥕 Add vegetables</li>
+          <li> 🍽️ Stir-fry with soy sauce and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+</div></div>
+
+<div class="outer-veg-card">
+  <h2>🥦🍅🥕 Vegetarian Recipes 🥦🍅🥕</h2>                  
+    <!-- Scrollable Inner Cards -->
+      <div class="inner-recipe-scroll" id="vegRecipeScroll">                
+        <!-- Mini Recipe Card 1 -->
+<!-- Recipe 1: Vegetarian Tofu Stir-Fry -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🥢 Vegetarian Tofu Stir-Fry</h3>
+      <img src=" v1tofu.png" alt="Vegetarian Tofu Stir-Fry">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 250 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🍱 Tofu</li>
+          <li>🌶️ Bell Peppers</li>
+          <li> 🥕 Carrots</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍳 Stir-fry tofu until golden</li>
+          <li>🌶️ Add bell peppers and carrots, stir-fry for 5 minutes</li>
+          <li>🍽️ Add soy sauce, stir well, and serve with rice</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+
+<!-- Recipe 2: Vegetarian Chickpea Curry -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍛 Vegetarian Chickpea Curry</h3>
+      <img src=" v2chickpea.png" alt="Vegetarian Chickpea Curry">
+      <p><strong>⏱️ Time:</strong> 40 mins | 🍽️ 3 Servings | 320 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li><img src="chickpeas.png" width="30"> 🌰 Chickpeas</li>
+          <li><img src="tomato.png" width="30"> 🍅 Tomatoes</li>
+          <li><img src="spinach.png" width="30"> 🥬 Spinach</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li><img src="step1-curry.jpg" width="100%"> 🍅 Cook chickpeas and tomatoes together</li>
+          <li><img src="step2-curry.jpg" width="100%"> 🥬 Add spinach and let it simmer</li>
+          <li><img src="step3-curry.jpg" width="100%"> 🍽️ Serve with rice or naan for a complete meal</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+<!-- Recipe 3: Stuffed Bell Peppers with Quinoa and Black Beans -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🌶️ Stuffed Bell Peppers with Quinoa and Black Beans</h3>
+      <img src=" v3stuffed.png" alt="Stuffed Bell Peppers with Quinoa and Black Beans">
+      <p><strong>⏱️ Time:</strong> 40 mins | 🍽️ 2 Servings | 350 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🌶️ Bell Peppers</li>
+          <li><img src="quinoa.png" width="30"> 🌾 Quinoa</li>
+          <li><img src="black-beans.png" width="30"> 🌰 Black Beans</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🌾 Cook quinoa</li>
+          <li>🌶️ Stuff bell peppers with quinoa and black beans</li>
+          <li>🍽️ Bake the stuffed peppers and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+<!-- Recipe 4: Vegetarian Lasagna with Spinach and Ricotta -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍝 Vegetarian Lasagna with Spinach and Ricotta</h3>
+      <img src=" v4lasagna.png" alt="Vegetarian Lasagna with Spinach and Ricotta">
+      <p><strong>⏱️ Time:</strong> 1 hour | 🍽️ 4 Servings | 400 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🥬 Spinach</li>
+          <li>🧀 Ricotta Cheese</li>
+          <li>🍝 Lasagna Noodles</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🧀 Prepare ricotta and spinach mixture</li>
+          <li>🍝 Layer lasagna noodles with ricotta mixture and marinara sauce</li>
+          <li>🍽️ Bake and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Recipe 5: Vegetarian Buddha Bowl -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🥗 Vegetarian Buddha Bowl</h3>
+      <img src=" v5buddha.png" alt="Vegetarian Buddha Bowl">
+      <p><strong>⏱️ Time:</strong> 20 mins | 🍽️ 1 Serving | 300 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested</h4>
+      <ul>
+          <li>🌾 Quinoa</li>
+          <li>🥑 Avocado</li>
+          <li>🌰 Chickpeas</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🌾 Cook quinoa</li>
+          <li>🥑 Prepare avocado, chickpeas, and other toppings</li>
+          <li>🍽️ Assemble in a bowl and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+
+  
+                <!-- Add more recipe cards as needed -->
+            
+              </div>
+            </div>
+
+            
+            
+
+
+
+
+
+
+            
+          
+<!-- Non-Veg Recipes -->
+<div class="outer-veg-card">
+  <!-- Outer Scroll Buttons -->
+<h2>🍗🍖🐟 Non-Vegetarian Recipes 🍗🍖🐟</h2>             
+  <!-- Scrollable Inner Cards -->
+  <div class="inner-recipe-scroll" id="vegRecipeScroll">
+
+<!-- Mini Recipe Card 1 -->
+                <!-- Recipe 1: Grilled Chicken with Lemon and Herbs -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍗 Grilled Chicken with Lemon and Herbs</h3>
+      <img src="grilled-chicken.jpg" alt="Grilled Chicken with Lemon and Herbs">
+      <p><strong>⏱️ Time:</strong> 30 mins | 🍽️ 2 Servings | 350 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested Ingredients</h4>
+      <ul>
+          <li>🍗 Chicken Breast</li>
+          <li>🍋 Lemon</li>
+          <li>🌿 Fresh Herbs (Rosemary, Thyme)</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍋 Marinate chicken with lemon and herbs</li>
+          <li>🍽️ Grill chicken until golden brown on both sides</li>
+          <li>🌿 Serve with roasted vegetables or salad</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Mini Recipe Card 2 -->
+<!-- Recipe 2: Spaghetti Bolognese -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍝 Spaghetti Bolognese</h3>
+      <img src="spaghetti-bolognese.jpg" alt="Spaghetti Bolognese">
+      <p><strong>⏱️ Time:</strong> 1 hour | 🍽️ 4 Servings | 500 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested Ingredients</h4>
+      <ul>
+          <li>🥩 Ground Beef</li>
+          <li>🍝 Spaghetti</li>
+          <li>🍅 Tomatoes</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🍅 Cook ground beef and tomatoes until soft</li>
+          <li>🍝 Boil spaghetti and drain</li>
+          <li>🍽️ Mix spaghetti with bolognese sauce and serve</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Mini Recipe Card 2 -->
+<!-- Recipe 3: Chicken Tikka Masala -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍗 Chicken Tikka Masala</h3>
+      <img src="chicken-tikka.jpg" alt="Chicken Tikka Masala">
+      <p><strong>⏱️ Time:</strong> 1 hour | 🍽️ 4 Servings | 550 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested Ingredients</h4>
+      <ul>
+          <li>🍗 Chicken Breast</li>
+          <li>🥛 Yogurt</li>
+          <li>🌶️ Tikka Masala Spices</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🥛 Marinate chicken in yogurt and spices</li>
+          <li>🍗 Cook chicken in a pan and make a sauce</li>
+          <li>🍽️ Serve with rice or naan</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Mini Recipe Card 2 -->
+<!-- Recipe 4: Salmon with Garlic and Dill -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🐟 Salmon with Garlic and Dill</h3>
+      <img src="salmon-garlic-dill.jpg" alt="Salmon with Garlic and Dill">
+      <p><strong>⏱️ Time:</strong> 25 mins | 🍽️ 2 Servings | 400 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested Ingredients</h4>
+      <ul>
+          <li>🐟 Salmon Fillets</li>
+          <li>🧄 Garlic</li>
+          <li>🌿 Fresh Dill</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🧄 Rub salmon with garlic and dill</li>
+          <li>🐟 Grill or bake salmon for 15-20 minutes</li>
+          <li>🌿 Serve with a side of vegetables or salad</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Mini Recipe Card 2 -->
+<!-- Recipe 5: Shrimp Scampi -->
+<div class="mini-recipe-card">
+  <div class="slide active">
+      <h3>🍤 Shrimp Scampi</h3>
+      <img src="shrimp-scampi.jpg" alt="Shrimp Scampi">
+      <p><strong>⏱️ Time:</strong> 20 mins | 🍽️ 2 Servings | 300 kcal</p>
+  </div>
+  <div class="slide">
+      <h4>🥗 Suggested Ingredients</h4>
+      <ul>
+          <li>🍤 Shrimp</li>
+          <li>🧄 Garlic</li>
+          <li>🧈 Butter</li>
+      </ul>
+  </div>
+  <div class="slide">
+      <h4>🍴 Preparation</h4>
+      <ol>
+          <li>🧄 Sauté garlic in butter</li>
+          <li>🍤 Add shrimp and cook until pink</li>
+          <li>🍽️ Serve with pasta or rice</li>
+      </ol>
+  </div>
+  <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+  <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+</div>
+<!-- Add more recipe cards as needed -->
+</div></div>
+
+<!-- Shopping List Section --><!-- Shopping List Section -->
+<div class="outer-veg-card">
+  <h2>🛒🍽️ Weekly Shopping List 🛒🍽️</h2>
+  <div class="inner-recipe-scroll" id="vegRecipeScroll">
+
+    <!-- Produce Section -->
+    <div class="mini-recipe-card">
+      <div class="slide active">
+        <h3>🥦 Produce</h3>
+        <p>Includes fresh veggies, fruits, and herbs for meal prep</p>
+        <img src=" produce.png" alt="produce">
+      </div>
+      <div class="slide">
+        <h4>🥕 Vegetables</h4>
+        <ul>
+          <li>🌶️ Bell peppers</li>
+          <li>🥒 Zucchini</li>
+          <li>🥬 Spinach</li>
+          <li>🍄 Mushrooms</li>
+          <li>🍠 Sweet potatoes</li>
+          <li>🥕 Carrots</li>
+          <li>🥦 Broccoli</li>
+          <li>🥬 Cauliflower</li>
+          <li>🧅 Onions</li>
+          <li>🫑 Green Chilies</li>
+        </ul>
+      </div>
+      <div class="slide">
+        <h4>🍌 Fruits</h4>
+        <ul>
+          <li>🍌 Bananas</li>
+          <li>🥑 Avocados</li>
+          <li>🍓 Strawberries</li>
+          <li>🫐 Blueberries</li>
+          <li>🍎 Apples</li>
+          <li>🍊 Oranges</li>
+          <li>🍇 Grapes</li>
+          <li>🍍 Pineapple</li>
+          <li>🍑 Peaches</li>
+          <li>🍋 Lemons</li>
+        </ul>
+      </div>
+      <div class="slide">
+        <h4>🌿 Fresh Herbs</h4>
+        <ul>
+          <li>🌿 Parsley</li>
+          <li>🌱 Cilantro</li>
+          <li>🌿 Basil</li>
+          <li>🌿 Mint</li>
+          <li>🌱 Dill</li>
+          <li>🌿 Thyme</li>
+          <li>🌱 Oregano</li>
+          <li>🌿 Sage</li>
+          <li>🌿 Chives</li>
+          <li>🌿 Rosemary</li>
+          
+        </ul>
+      </div>
+      <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+      <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+    </div>
+
+    <!-- Proteins Section -->
+    <div class="mini-recipe-card">
+      <div class="slide active">
+        <h3>🍳 Proteins</h3>
+        <p>Plant-based options and dairy/non-dairy sources</p>
+        <img src=" protiens.png" alt="produce">
+      </div>
+      <div class="slide">
+        <h4>🌱 Plant-based</h4>
+        <ul><li>🫘 Black beans</li>
+          <li>🟤 Lentils</li>
+          <li>🧆 Chickpeas</li>
+          <li>🍛 Tofu</li>
+          <li>🥛 Almond milk</li>
+          <li>🧀 Vegan feta cheese</li>
+          <li>🧈 Peanut butter</li>
+          <li>🥜 Edamame</li>
+          <li>🫘 Kidney beans</li>
+          <li>🧀 Greek yogurt (optional)</li>
+</ul>          
+      </div>
+      <div class="slide">
+        <h4>🥛 Dairy/Alternatives</h4>
+        <ul><li>🧆 Tofu</li>
+          <li>🌱 Tempeh</li>
+          <li>🫘 Chickpeas</li>
+          <li>🟤 Lentils</li>
+          <li>🥜 Peanut butter</li>
+          <li>🥛 Almond milk</li>
+          <li>🥥 Coconut milk</li>
+          <li>🌾 Oat milk</li>
+          <li>🧀 Vegan cheese</li>
+          <li>🍦 Plant-based yogurt</li>
+          
+        </ul>
+      </div>
+      <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+      <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+    </div>
+
+    <!-- Grains Section -->
+    <div class="mini-recipe-card">
+      <div class="slide active">
+        <h3>🍞 Grains</h3>
+        <p>Whole grain and gluten-free options for a healthy base</p>
+        <img src=" grains.png" alt="produce">
+      </div>
+      <div class="slide">
+        <h4>🌾 Whole Grains</h4>
+        <ul>
+          <li>🍚 Quinoa</li>
+          <li>🍚 Brown rice</li>
+          <li>🍞 Whole grain bread</li>
+          <li>🍝 Whole wheat pasta</li>
+          <li>🌾 Rolled oats</li>
+          <li>🍘 Couscous</li>
+          <li>🥖 Baguette</li>
+          <li>🍚 Barley</li>
+          <li>🥯 Bagels</li>
+          <li>🍞 Gluten-free bread</li>
+
+        </ul>
+      </div>
+      <div class="slide">
+        <h4>🌾 Gluten-Free</h4>
+        <ul><li>🍞 Gluten-free bread</li>
+          <li>🍝 Gluten-free pasta</li>
+          <li>🍚 Brown rice</li>
+          <li>🌾 Quinoa</li>
+          <li>🌽 Corn tortillas</li>
+          <li>🥣 Oats (certified gluten-free)</li>
+          <li>🍛 Millet</li>
+          <li>🥟 Rice noodles</li>
+          <li>🫓 Buckwheat wraps</li>
+          <li>🧁 Almond flour (or coconut flour)</li>
+          
+        </ul>
+      </div>
+      <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+      <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+    </div>
+
+    <!-- Pantry Section -->
+    <div class="mini-recipe-card">
+      <div class="slide active">
+        <h3>🧂 Pantry</h3>
+        <p>Essential shelf-stable ingredients</p>
+      </div>
+      <div class="slide">
+        <h4>🥫 Canned Goods</h4>
+        <ul><li>🥫 Black beans</li>
+          <li>🥫 Lentils</li>
+          <li>🥫 Chickpeas</li>
+          <li>🥫 Diced tomatoes</li>
+          <li>🥜 Almonds</li>
+          <li>🌰 Chia seeds</li>
+          <li>🌰 Flaxseeds</li>
+          <li>🧂 Cumin</li>
+          <li>🌶️ Paprika</li>
+          <li>🧄 Garlic powder</li>
+          
+        </ul>
+      </div>
+      <div class="slide">
+        <h4>🥜 Nuts & Seeds</h4>
+        <ul><li>🥜 Almonds</li>
+          <li>🌰 Walnuts</li>
+          <li>🥥 Coconut flakes</li>
+          <li>🟤 Chia seeds</li>
+          <li>🟠 Flaxseeds</li>
+          <li>🎃 Pumpkin seeds</li>
+          <li>🥜 Peanuts</li>
+          <li>⚪ Sunflower seeds</li>
+          <li>🍘 Sesame seeds</li>
+          <li>🌰 Cashews</li>
+          
+        </ul>
+      </div>
+      <div class="slide">
+        <h4>🌶️ Spices</h4>
+        <ul><li>🧄 Garlic powder</li>
+          <li>🧂 Salt</li>
+          <li>🌶️ Chili flakes</li>
+          <li>🟡 Turmeric</li>
+          <li>🧅 Onion powder</li>
+          <li>🟤 Cumin</li>
+          <li>🟥 Paprika</li>
+          <li>🌿 Oregano</li>
+          <li>🍃 Basil</li>
+          <li>🧵 Salt-free seasoning mix</li>
+          
+        </ul>
+      </div>
+      <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+      <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+    </div>
+
+    <!-- Snacks Section -->
+    <div class="mini-recipe-card">
+      <div class="slide active">
+        <h3>🍪 Snacks</h3>
+        <p>Quick bites and healthy snack picks</p>
+      </div>
+      <div class="slide">
+        <h4>🥜 Nuts & Seeds</h4>
+        <ul><li>🥜 Almonds</li>
+          <li>🎃 Pumpkin seeds</li>
+          <li>🍪 Granola bars</li>
+          <li>🥯 Rice cakes</li>
+          <li>🥜 Trail mix</li>
+          <li>🍫 Dark chocolate</li>
+          <li>🍘 Seaweed snacks</li>
+          <li>🍑 Dried apricots</li>
+          <li>🍇 Raisins</li>
+          <li>🌰 Cashews</li>
+          
+        </ul>
+      </div>
+      <div class="slide">
+        <h4>🍇 Dried Fruits</h4>
+        <ul><li>🌴 Dates</li>
+          <li>🍑 Dried apricots</li>
+          <li>🍇 Raisins</li>
+          <li>🍒 Dried cranberries</li>
+          <li>🥭 Dried mango</li>
+          <li>🍌 Dried bananas</li>
+          <li>🍍 Dried pineapple</li>
+          <li>🍏 Dried apples</li>
+          <li>🧺 Trail mix (with dried fruit)</li>
+          <li>🍓 Freeze-dried strawberries</li>
+          
+        </ul>
+      </div>
+      <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+      <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+    </div>
+
+    <!-- Beverages Section -->
+    <div class="mini-recipe-card">
+      <div class="slide active">
+        <h3>🥤 Beverages</h3>
+        <p>Hot drinks and Soft drinks</p>
+      </div>
+      <div class="slide">
+        <h4>🥤 Beverages</h4>
+        <ul><li>💧 Water</li>
+          <li>🍵 Herbal teas</li>
+          <li>🥤 Low-sodium juice</li>
+          <li>🧃 Orange juice</li>
+          <li>☕ Coffee (optional)</li>
+          <li>🥛 Oat milk</li>
+          <li>🧊 Coconut water</li>
+          <li>🍵 Matcha</li>
+          <li>🧋 Iced tea</li>
+          <li>🥥 Almond coconut blend</li>
+          
+        </ul>
+      </div>
+      <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+      <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+    </div>
+    </div></div>
+
+
+
+
+
+              
+           
+          
+            <!-- Help Center -->
+            <div class="outer-veg-card" style="margin-top: 2rem;">
+                <h2>🆘📞💬 Help Center 🆘📞💬</h2>
+                <div class="recipe-info"></div>
+                <p>If you need any assistance, feel free to reach out to us.</p>
+                <p>Email: <strong>help@aicook.com</strong></p>
+                <p>We're here to help 24/7!</p>
+                </div>
+            </div>
+  
+  
+          
+
+      <section id="veg" class="section">
+        <h2>Vegetarian Recipes</h2>
+        <div class="recipe-row">
+          <div class="recipe-card">
+            <div class="slide-container">
+              <img src="veg1.jpg" class="slide" />
+              <img src="veg2.jpg" class="slide" />
+              <img src="veg3.jpg" class="slide" />
+              <button class="prev">&#10094;</button>
+              <button class="next">&#10095;</button>
+            </div>
+            <div class="recipe-info">
+              <h3>Paneer Butter Masala</h3>
+              <p>Time: 30 min | Calories: 250</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="nonveg" class="section">
+        <h2>Non-Vegetarian Recipes</h2>
+        <div class="recipe-row">
+          <div class="recipe-card">
+            <div class="slide-container">
+              <img src="nonveg1.jpg" class="slide" />
+              <img src="nonveg2.jpg" class="slide" />
+              <img src="nonveg3.jpg" class="slide" />
+              <button class="prev">&#10094;</button>
+              <button class="next">&#10095;</button>
+            </div>
+            <div class="recipe-info">
+              <h3>Chicken Curry</h3>
+              <p>Time: 45 min | Calories: 380</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="snacks" class="section">
+        <h2>Snacks</h2>
+        <p>Coming soon...</p>
+      </section>
+
+      <section id="dinner" class="section">
+        <h2>Dinner</h2>
+        <p>Coming soon...</p>
+      </section>
+
+      <section id="help" class="section">
+        <h2>Help Center</h2>
+        <p>Need assistance? Email help@aicook.com.</p>
+      </section>
+
+      <section id="contact" class="section">
+        <h2>Contact Us</h2>
+        <p>Email: support@aicook.com | Phone: +123 456 7890</p>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 AI Cooking Assistant | Contact: support@aicook.com</p>
+  </footer>
+
+  <script>// Sample recipe dataset for suggestion functionality
+const recipes = [
+  {
+    title: "🥦 Vegetarian Tofu Stir-Fry",
+    image: " tofu_stirfry.png",
+    time: "30 mins",
+    servings: "2",
+    calories: "250 kcal",
+    ingredients: ["🍽️ Tofu", "🥦 Broccoli", "🌶️ Bell Peppers", "🍄 Mushrooms", "🍚 Rice"],
+    steps: ["🍲 Stir-fry tofu", "🥕 Add veggies", "🍽️ Serve with rice"],
+    suitableFor: ["vegetarian", "gluten-free", "weight loss"]
+  },
+  {
+    title: "🍛 Vegetarian Chickpea Curry",
+    image: " chickpea_curry.png",
+    time: "40 mins",
+    servings: "3",
+    calories: "320 kcal",
+    ingredients: ["🍛 Chickpeas", "🍅 Tomatoes", "🧄 Garlic", "🌶️ Spices", "🥬 Spinach"],
+    steps: ["🍲 Cook chickpeas", "🍅 Add tomatoes", "🍽️ Simmer and serve"],
+    suitableFor: ["vegetarian", "gluten-free"]
+  },
+  {
+    title: "🌶️ Stuffed Bell Peppers with Quinoa and Black Beans",
+    image: " stuffed_peppers.png",
+    time: "40 mins",
+    servings: "2",
+    calories: "350 kcal",
+    ingredients: ["🌶️ Bell Peppers", "🍚 Quinoa", "🫘 Black Beans", "🌿 Cilantro"],
+    steps: ["🍲 Prepare quinoa", "🌶️ Stuff peppers", "🍽️ Bake and serve"],
+    suitableFor: ["vegetarian", "gluten-free"]
+  },
+  {
+    title: "🍝 Vegetarian Lasagna with Spinach and Ricotta",
+    image: " vegetarian_lasagna.png",
+    time: "1 hour",
+    servings: "4",
+    calories: "400 kcal",
+    ingredients: ["🍝 Lasagna Sheets", "🧀 Ricotta", "🥬 Spinach", "🍅 Tomatoes"],
+    steps: ["🍲 Layer lasagna", "🧀 Add cheese", "🍽️ Bake and serve"],
+    suitableFor: ["vegetarian", "gluten-free"]
+  },
+  {
+    title: "🥗 Vegetarian Buddha Bowl",
+    image: " buddha_bowl.png",
+    time: "30 mins",
+    servings: "2",
+    calories: "350 kcal",
+    ingredients: ["🥗 Kale", "🍚 Quinoa", "🍅 Tomatoes", "🥑 Avocado", "🍣 Chickpeas"],
+    steps: ["🍲 Prepare ingredients", "🥗 Assemble bowl", "🍽️ Serve"],
+    suitableFor: ["vegetarian", "gluten-free", "weight loss"]
+  },
+  {
+    title: "🥩 Grilled Chicken with Lemon and Herbs",
+    image: " grilled_chicken.png",
+    time: "30 mins",
+    servings: "2",
+    calories: "350 kcal",
+    ingredients: ["🍗 Chicken Breast", "🍋 Lemon", "🌿 Herbs", "🍞 Whole Grain Bread"],
+    steps: ["🍗 Grill chicken", "🍋 Squeeze lemon", "🍽️ Serve with bread"],
+    suitableFor: ["gluten-free", "weight loss"]
+  },
+  {
+    title: "🍝 Spaghetti Bolognese",
+    image: " spaghetti_bolognese.png",
+    time: "1 hour",
+    servings: "4",
+    calories: "500 kcal",
+    ingredients: ["🍝 Spaghetti", "🍅 Tomato Sauce", "🥩 Ground Beef", "🧄 Garlic"],
+    steps: ["🍝 Boil spaghetti", "🥩 Cook ground beef", "🍽️ Serve with sauce"],
+    suitableFor: ["non-vegetarian"]
+  },
+  {
+    title: "🍗 Chicken Tikka Masala",
+    image: " chicken_tikka.png",
+    time: "1 hour",
+    servings: "4",
+    calories: "550 kcal",
+    ingredients: ["🍗 Chicken", "🍛 Tikka Masala Sauce", "🍅 Tomatoes", "🌶️ Spices"],
+    steps: ["🍗 Marinate chicken", "🍛 Cook in sauce", "🍽️ Serve with rice"],
+    suitableFor: ["non-vegetarian"]
+  },
+  {
+    title: "🐟 Salmon with Garlic and Dill",
+    image: " salmon_dill.png",
+    time: "25 mins",
+    servings: "2",
+    calories: "400 kcal",
+    ingredients: ["🐟 Salmon", "🧄 Garlic", "🌿 Dill", "🍋 Lemon"],
+    steps: ["🐟 Grill salmon", "🧄 Add garlic and dill", "🍽️ Serve with lemon"],
+    suitableFor: ["non-vegetarian"]
+  },
+  {
+    title: "🍤 Shrimp Scampi",
+    image: " shrimp_scampi.png",
+    time: "30 mins",
+    servings: "2",
+    calories: "300 kcal",
+    ingredients: ["🍤 Shrimp", "🍋 Lemon", "🧄 Garlic", "🍝 Spaghetti"],
+    steps: ["🍤 Cook shrimp", "🍝 Boil spaghetti", "🍽️ Toss shrimp and pasta"],
+    suitableFor: ["non-vegetarian"]
+  },
+  {
+    title: "🍞 Grains - Whole Grain and Gluten-Free Options",
+    image: " grains.png",
+    time: "Varies",
+    servings: "Varies",
+    calories: "Varies",
+    ingredients: ["🍞 Whole Grains", "🍚 Rice", "🥖 Gluten-Free Bread"],
+    steps: ["🍞 Bake bread", "🍚 Cook rice", "🍽️ Serve with main dish"],
+    suitableFor: ["gluten-free"]
+  },
+  {
+    title: "🍪 Snacks - Quick Bites and Healthy Snack Picks",
+    image: " snacks.png",
+    time: "10 mins",
+    servings: "Varies",
+    calories: "Varies",
+    ingredients: ["🍎 Apple", "🥜 Nuts", "🍫 Dark Chocolate"],
+    steps: ["🍎 Slice apple", "🥜 Mix nuts", "🍫 Serve with chocolate"],
+    suitableFor: ["vegetarian", "gluten-free"]
+  },
+  {
+    title: "🥤 Beverages - Hot Drinks and Soft Drinks",
+    image: " beverages.png",
+    time: "Varies",
+    servings: "Varies",
+    calories: "Varies",
+    ingredients: ["🍵 Green Tea", "☕ Coffee", "🍊 Orange Juice"],
+    steps: ["🍵 Brew tea", "☕ Brew coffee", "🍊 Squeeze juice"],
+    suitableFor: ["vegetarian", "gluten-free"]
+  },
+
+  {
+    title: "Quinoa and Black Bean Bowl",
+    image: "s1quinoa.png",
+    time: "30 mins",
+    servings: "2",
+    calories: "250 kcal",
+    ingredients: ["🌱 Spinach", "🫘 Black Beans", "🌶 Bell Peppers"],
+    steps: ["🍲 Cook quinoa", "🔥 Roast veggies", "🍽 Combine and serve"],
+    suitableFor: ["diabetes", "vegetarian", "gluten-free", "weight loss"]
+  },
+  {
+    title: "Grilled Portobello Mushroom Burgers with Sweet Potato Fries",
+    image: " portobello_burger.png",
+    time: "35 mins",
+    servings: "2",
+    calories: "320 kcal",
+    ingredients: ["🍄 Portobello Mushrooms", "🍠 Sweet Potatoes", "🍞 Whole Grain Buns"],
+    steps: ["🔥 Grill mushrooms", "🍟 Bake sweet potato fries", "🍔 Assemble burgers"],
+    suitableFor: ["vegetarian", "low cholesterol"]
+  },
+  {
+    title: "Spinach and Feta Stuffed Bell Peppers",
+    image: " spinach_feta_peppers.png",
+    time: "30 mins",
+    servings: "2",
+    calories: "200 kcal",
+    ingredients: ["🌶 Bell Peppers", "🌱 Spinach", "🧀 Feta Cheese"],
+    steps: ["🧅 Prepare filling", "🫑 Stuff peppers", "🔥 Bake until tender"],
+    suitableFor: ["vegetarian", "low carb"]
+  },
+  {
+    title: "Lentil and Vegetable Curry with Brown Rice",
+    image: " lentil_curry.png",
+    time: "40 mins",
+    servings: "3",
+    calories: "300 kcal",
+    ingredients: ["🫘 Lentils", "🥕 Mixed Veggies", "🍚 Brown Rice"],
+    steps: ["🍛 Cook curry", "🍚 Prepare rice", "🍽 Serve together"],
+    suitableFor: ["vegan", "diabetes-friendly"]
+  },
+  {
+    title: "Vegan Black Bean Tacos with Avocado Salsa",
+    image: " blackbean_tacos.png",
+    time: "20 mins",
+    servings: "2",
+    calories: "280 kcal",
+    ingredients: ["🌮 Taco Shells", "🫘 Black Beans", "🥑 Avocado"],
+    steps: ["🧅 Sauté beans", "🥑 Make salsa", "🌮 Assemble tacos"],
+    suitableFor: ["vegan", "gluten-free", "low sodium"]
+  },
+  {
+    title: "Chia Seed Pudding with Fresh Fruit",
+    image: " chia_pudding.png",
+    time: "15 mins",
+    servings: "2",
+    calories: "200 kcal",
+    ingredients: ["🌱 Chia Seeds", "🥛 Plant Milk", "🍓 Mixed Fruits"],
+    steps: ["🥄 Mix chia and milk", "🕒 Let it set", "🍓 Top with fruit"],
+    suitableFor: ["vegan", "gluten-free", "low sugar"]
+  },
+  {
+    title: "Roasted Vegetable Bowl with Chickpeas",
+    image: " veggie_bowl_chickpeas.png",
+    time: "35 mins",
+    servings: "3",
+    calories: "270 kcal",
+    ingredients: ["🥕 Roasted Veggies", "🧆 Chickpeas", "🍚 Brown Rice"],
+    steps: ["🔥 Roast veggies", "🍛 Add chickpeas", "🍽 Serve in a bowl"],
+    suitableFor: ["vegan", "diabetes", "heart health"]
+  },
+  {
+    title: "Spinach and Feta Stuffed Zucchini Boats",
+    image: " zucchini_boats.png",
+    time: "25 mins",
+    servings: "2",
+    calories: "150 kcal",
+    ingredients: ["🥒 Zucchini", "🌱 Spinach", "🧀 Feta Cheese"],
+    steps: ["🥒 Hollow zucchinis", "🧅 Prepare filling", "🔥 Bake"],
+    suitableFor: ["vegetarian", "low calorie", "gluten-free"]
+  },
+  {
+    title: "Low-Phosphorus Vegetable Stir-Fry with Tofu",
+    image: " low_phos_stirfry.png",
+    time: "30 mins",
+    servings: "2",
+    calories: "230 kcal",
+    ingredients: ["🥦 Veggies", "🍛 Tofu", "🍚 Brown Rice"],
+    steps: ["🥘 Stir-fry tofu & veggies", "🍚 Cook rice", "🍽 Combine & serve"],
+    suitableFor: ["low phosphorus", "vegan", "diabetes-friendly"]
+  },
+  {
+    title: "Low-Potassium Vegetable Soup with Whole Grain Bread",
+    image: " low_pot_soup.png",
+    time: "30 mins",
+    servings: "2",
+    calories: "180 kcal",
+    ingredients: ["🥣 Veggies", "🌿 Herbs", "🍞 Whole Grain Bread"],
+    steps: ["🥣 Cook soup", "🧂 Season", "🍞 Serve with bread"],
+    suitableFor: ["low potassium", "heart health"]
+  },
+
+
+
+
+
+
+
+
+
+
+  
+  {
+    title: "Grilled Chicken Skewers",
+    image: " chicken_skewers.png",
+    time: "40 mins",
+    servings: "4",
+    calories: "300 kcal",
+    ingredients: ["🍗 Chicken", "🥦 Broccoli", "🥕 Carrots"],
+    steps: ["🔥 Grill chicken", "🥗 Toss veggies", "🍽 Serve skewers"],
+    suitableFor: ["non-vegetarian", "low-carb", "diabetes"]
+  },
+  {
+    title: "Vegan Lentil Soup",
+    image: " lentil_soup.png",
+    time: "35 mins",
+    servings: "3",
+    calories: "220 kcal",
+    ingredients: ["🧅 Onions", "🥕 Carrots", "🟤 Lentils"],
+    steps: ["🥣 Boil lentils", "🧅 Add veggies", "🍽 Serve hot"],
+    suitableFor: ["vegan", "low-sodium", "diabetes"]
+  },
+  {
+    title: "Chicken Brown Rice Bowl",
+    image: " chicken_rice.png",
+    time: "45 mins",
+    servings: "4",
+    calories: "480 kcal",
+    ingredients: ["🍗 Chicken", "🍚 Brown Rice", "🥦 Vegetables"],
+    steps: ["🔥 Grill chicken", "🍚 Cook rice", "🍽 Assemble bowl"],
+    suitableFor: ["non-vegetarian", "weight loss", "low-fat"]
+  },
+  {
+    title: "Vegan Buddha Bowl",
+    image: " buddha_bowl.png",
+    time: "25 mins",
+    servings: "2",
+    calories: "300 kcal",
+    ingredients: ["🌱 Quinoa", "🥑 Avocado", "🥕 Carrots"],
+    steps: ["🍲 Cook quinoa", "🥗 Slice veggies", "🍽 Serve in bowl"],
+    suitableFor: ["vegan", "gluten-free", "athletic performance"]
+  },
+  {
+    title: "Grilled Salmon with Greens",
+    image: " salmon_greens.png",
+    time: "35 mins",
+    servings: "2",
+    calories: "350 kcal",
+    ingredients: ["🐟 Salmon", "🥬 Kale", "🍋 Lemon"],
+    steps: ["🔥 Grill salmon", "🥬 Sauté greens", "🍽 Plate and serve"],
+    suitableFor: ["non-vegetarian", "omega-3", "diabetes"]
+  },
+  {
+    title: "Chickpea Salad",
+    image: " chickpea_salad.png",
+    time: "15 mins",
+    servings: "2",
+    calories: "180 kcal",
+    ingredients: ["🟡 Chickpeas", "🍅 Tomatoes", "🥒 Cucumber"],
+    steps: ["🥗 Mix ingredients", "🧂 Add seasoning", "🍽 Serve chilled"],
+    suitableFor: ["vegetarian", "vegan", "low-sodium", "pregnancy"]
+  },
+  {
+    title: "Avocado Toast with Egg",
+    image: " s5roasted.png",
+    time: "10 mins",
+    servings: "1",
+    calories: "200 kcal",
+    ingredients: ["🥑 Avocado", "🍞 Whole Grain Bread", "🥚 Egg"],
+    steps: ["🍞 Toast bread", "🥑 Spread avocado", "🍳 Top with egg"],
+    suitableFor: ["vegetarian", "diabetes", "weight loss"]
+  },
+  {
+    title: "Tofu Stir-Fry",
+    image: " tofu_stirfry.png",
+    time: "20 mins",
+    servings: "3",
+    calories: "240 kcal",
+    ingredients: ["🍱 Tofu", "🥦 Broccoli", "🥕 Carrots"],
+    steps: ["🔥 Stir-fry tofu", "🥗 Add veggies", "🍽 Serve hot"],
+    suitableFor: ["vegan", "soy-free", "athletic performance"]
+  },
+  {
+    title: "Sweet Potato and Spinach Curry",
+    image: " sweetpotato_curry.png",
+    time: "35 mins",
+    servings: "3",
+    calories: "320 kcal",
+    ingredients: ["🥔 Sweet Potatoes", "🌱 Spinach", "🧄 Garlic"],
+    steps: ["🔥 Cook curry", "🥬 Add spinach", "🍽 Serve with rice"],
+    suitableFor: ["vegetarian", "gluten-free", "low-sodium"]
+  },
+  {
+    title: "Turkey Lettuce Wraps",
+    image: " turkey_lettuce_wraps.png",
+    time: "25 mins",
+    servings: "2",
+    calories: "260 kcal",
+    ingredients: ["🦃 Ground Turkey", "🥬 Lettuce", "🧅 Onions"],
+    steps: ["🔥 Sauté turkey", "🥗 Wrap in lettuce", "🍽 Enjoy"],
+    suitableFor: ["non-vegetarian", "low-carb", "weight loss"]
+  },
+  {
+    title: "Spinach & Feta Omelette",
+    image: " spinachomlette.png",
+    time: "15 mins",
+    servings: "1",
+    calories: "210 kcal",
+    ingredients: ["🥚 Eggs", "🌱 Spinach", "🧀 Feta"],
+    steps: ["🍳 Whisk eggs", "🥬 Add spinach", "🧀 Cook with feta"],
+    suitableFor: ["vegetarian", "low-carb", "diabetes"]
+  },
+  {
+    title: "Oats with Berries",
+    image: " oats_berries.png",
+    time: "10 mins",
+    servings: "1",
+    calories: "180 kcal",
+    ingredients: ["🌾 Oats", "🫐 Berries", "🥛 Milk"],
+    steps: ["🥣 Boil oats", "🫐 Add berries", "🍽 Serve"],
+    suitableFor: ["vegetarian", "pregnancy", "weight loss"]
+  },
+  {
+    title: "Greek Yogurt Parfait",
+    image: " yogurt_parfait.png",
+    time: "5 mins",
+    servings: "1",
+    calories: "150 kcal",
+    ingredients: ["🥣 Greek Yogurt", "🍓 Strawberries", "🌾 Granola"],
+    steps: ["🥣 Layer ingredients", "🫙 Chill", "🍽 Enjoy"],
+    suitableFor: ["vegetarian", "gluten-free", "low-fat"]
+  },
+  {
+    title: "Stuffed Zucchini Boats",
+    image: " zucchini_boats.png",
+    time: "30 mins",
+    servings: "2",
+    calories: "280 kcal",
+    ingredients: ["🥒 Zucchini", "🧀 Cheese", "🍅 Tomatoes"],
+    steps: ["🧑‍🍳 Stuff zucchini", "🔥 Bake", "🍽 Serve warm"],
+    suitableFor: ["vegetarian", "diabetes", "gluten-free"]
+  },
+  {
+    title: "Mushroom Risotto",
+    image: " mushroom_risotto.png",
+    time: "45 mins",
+    servings: "3",
+    calories: "340 kcal",
+    ingredients: ["🍄 Mushrooms", "🍚 Arborio Rice", "🧅 Onion"],
+    steps: ["🍳 Cook rice", "🍄 Add mushrooms", "🍽 Stir and serve"],
+    suitableFor: ["vegetarian", "low-sodium", "older adults"]
+  },
+  {
+    title: "Shrimp Avocado Salad",
+    image: " shrimp_salad.png",
+    time: "20 mins",
+    servings: "2",
+    calories: "300 kcal",
+    ingredients: ["🦐 Shrimp", "🥑 Avocado", "🥗 Lettuce"],
+    steps: ["🔥 Grill shrimp", "🥗 Mix salad", "🍽 Serve cold"],
+    suitableFor: ["non-vegetarian", "gluten-free", "omega-3"]
+  },
+  {
+    title: "Vegan Chickpea Curry",
+    image: " chickpea_curry.png",
+    time: "30 mins",
+    servings: "3",
+    calories: "270 kcal",
+    ingredients: ["🟡 Chickpeas", "🍅 Tomatoes", "🧄 Garlic"],
+    steps: ["🔥 Cook curry", "🧄 Add spices", "🍽 Serve hot"],
+    suitableFor: ["vegan", "low-sodium", "pregnancy"]
+  },
+  {
+    title: "Broccoli Cheese Soup",
+    image: " broccoli_soup.png",
+    time: "30 mins",
+    servings: "2",
+    calories: "320 kcal",
+    ingredients: ["🥦 Broccoli", "🧀 Cheese", "🥛 Milk"],
+    steps: ["🥣 Cook broccoli", "🧀 Add cheese", "🍽 Blend and serve"],
+    suitableFor: ["vegetarian", "older adults", "low-fat"]
+  },
+  {
+    title: "Baked Eggplant Parmesan",
+    image: " eggplant_parmesan.png",
+    time: "40 mins",
+    servings: "3",
+    calories: "300 kcal",
+    ingredients: ["🍆 Eggplant", "🧀 Parmesan", "🍅 Marinara"],
+    steps: ["🔥 Bake eggplant", "🧀 Layer cheese", "🍽 Serve"],
+    suitableFor: ["vegetarian", "gluten-free", "diabetes"]
+  },
+  {
+    title: "Turkey Quinoa Bowl",
+    image: " turkey_quinoa.png",
+    time: "35 mins",
+    servings: "3",
+    calories: "350 kcal",
+    ingredients: ["🦃 Ground Turkey", "🌱 Quinoa", "🥦 Veggies"],
+    steps: ["🔥 Cook turkey", "🍲 Add quinoa", "🍽 Combine"],
+    suitableFor: ["non-vegetarian", "weight loss", "athletic performance"]
+  },
+  {
+    title: "Almond Banana Smoothie",
+    image: " banana_smoothie.png",
+    time: "5 mins",
+    servings: "1",
+    calories: "180 kcal",
+    ingredients: ["🍌 Banana", "🥛 Milk", "🌰 Almonds"],
+    steps: ["🥤 Blend all", "❄️ Chill", "🍽 Drink up"],
+    suitableFor: ["vegetarian", "pregnancy", "athletic performance"]
+  },
+  {
+    title: "Paneer Veg Wrap",
+    image: " paneer_wrap.png",
+    time: "20 mins",
+    servings: "2",
+    calories: "290 kcal",
+    ingredients: ["🧀 Paneer", "🌮 Wrap", "🥬 Lettuce"],
+    steps: ["🔥 Cook paneer", "🥗 Add veggies", "🌯 Wrap and eat"],
+    suitableFor: ["vegetarian", "diabetes", "low-fat"]
+  },
+  {
+    title: "Lentil and Spinach Stew",
+    image: " lentil_spinach.png",
+    time: "30 mins",
+    servings: "2",
+    calories: "220 kcal",
+    ingredients: ["🟤 Lentils", "🌱 Spinach", "🧅 Onion"],
+    steps: ["🔥 Cook lentils", "🥬 Add spinach", "🍽 Serve"],
+    suitableFor: ["vegan", "low-sodium", "diabetes"]
+  },
+  {
+    title: "Veggie Pasta Primavera",
+    image: " pasta_primavera.png",
+    time: "35 mins",
+    servings: "4",
+    calories: "350 kcal",
+    ingredients: ["🍝 Pasta", "🥦 Veggies", "🧄 Garlic"],
+    steps: ["🍝 Cook pasta", "🥗 Add veggies", "🍽 Mix and serve"],
+    suitableFor: ["vegetarian", "low-fat", "pregnancy"]
+  }
+];
+  function changeSlide(button, direction) {
+    const card = button.closest('.mini-recipe-card');
+    const slides = card.querySelectorAll('.slide');
+    let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
+    if (currentIndex !== -1) slides[currentIndex].classList.remove('active');
+
+    let newIndex = currentIndex + direction;
+    if (newIndex < 0) newIndex = slides.length - 1;
+    if (newIndex >= slides.length) newIndex = 0;
+    slides[newIndex].classList.add('active');
+  }
+
+  function buildRecipeCard(recipe) {
+    const ingredientsHTML = recipe.ingredients.map(item => `<li>${item}</li>`).join("");
+    const stepsHTML = recipe.steps.map(step => `<li>${step}</li>`).join("");
+
+    return `
+      <div class="mini-recipe-card">
+        <div class="slide active">
+            <h3>${recipe.title}</h3>
+            <img src="${recipe.image}" alt="${recipe.title}">
+            <p><strong>⏱️ Time:</strong> ${recipe.time} | 🍽️ ${recipe.servings} Servings | 🔥 ${recipe.calories}</p>
+        </div>
+        <div class="slide">
+            <h4>🥗 Suggested Ingredients</h4>
+            <ul>${ingredientsHTML}</ul>
+        </div>
+        <div class="slide">
+            <h4>🍴 Preparation</h4>
+            <ol>${stepsHTML}</ol>
+        </div>
+        <button class="card-nav-btn left" onclick="changeSlide(this, -1)">&#10094;</button>
+        <button class="card-nav-btn right" onclick="changeSlide(this, 1)">&#10095;</button>
+      </div>
+    `;
+  }
+
+  function collectAndSuggest() {
+  // Get selected values
+  let selectedNeeds = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+    .map(cb => cb.value.toLowerCase());
+
+  // Add "vegetarian" only if it's not already selected
+  if (!selectedNeeds.includes("vegetarian")) {
+    selectedNeeds.push("vegetarian");
+  }
+
+  // Filter recipes that match all selected needs
+  const matchingRecipes = recipes.filter(recipe =>
+    selectedNeeds.every(need => recipe.suitableFor.includes(need))
+  );
+
+  // Get the output div and clear it before adding new results
+  const outputDiv = document.getElementById("suggestedMeal");
+  outputDiv.innerHTML = "";  // Clear previous content
+
+  if (matchingRecipes.length > 0) {
+    matchingRecipes.forEach(recipe => {
+      outputDiv.innerHTML += buildRecipeCard(recipe);
+    });
+  } else {
+    outputDiv.innerHTML = "<p>No recipes found for the selected needs.</p>";
+  }
+}
+
+
+  document.getElementById("suggest-btn").addEventListener("click", collectAndSuggest);
+</script>
+</html>
